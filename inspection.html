@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#0A2540" />
+    <title>Inspection — Blue Wave Construction</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  </head>
+  <body>
+    <main class="app">
+      <header class="app-header">
+        <a href="index.html" style="text-decoration: none">
+          <img
+            src="assets/01_logo_horizontal_navy.svg"
+            alt="Blue Wave Construction"
+            class="logo"
+          />
+        </a>
+        <div class="meta">
+          Field Form <span class="sep">·</span> No. 01
+          <span class="sep">·</span> <span id="reportIdDisplay">BWC-INS-…</span>
+        </div>
+      </header>
+
+      <h1 class="page-title">Property <span class="ampersand">&</span> Unit Inspection</h1>
+      <svg class="title-wave" viewBox="0 0 64 8" xmlns="http://www.w3.org/2000/svg">
+        <path d="M 1 4 Q 9 1, 17 4 T 33 4 T 49 4 T 63 4" />
+      </svg>
+      <p class="page-subtitle">
+        Walk the unit. Check the systems. Document anything that needs attention.
+        Issues route to the on-site invoice or follow-up estimate automatically.
+      </p>
+
+      <form id="inspectionForm" autocomplete="off">
+
+        <!-- ============================================
+             SECTION 1 — PROPERTY INFO
+             ============================================ -->
+        <section class="section">
+          <h2 class="section-title">
+            <span class="num">i.</span> Property Information
+          </h2>
+
+          <div class="field">
+            <label class="label" for="propertyAddress">
+              Property Address <span class="required">*</span>
+            </label>
+            <input type="text" id="propertyAddress" placeholder="123 Main St, Hawthorne, CA 90250" required />
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label class="label" for="unitNumber">Unit / Apt #</label>
+              <input type="text" id="unitNumber" placeholder="Unit 4" />
+            </div>
+            <div class="field">
+              <label class="label" for="inspectionDate">
+                Date <span class="required">*</span>
+              </label>
+              <input type="date" id="inspectionDate" required />
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label class="label">Tenant Present?</label>
+              <div class="toggle-group" role="radiogroup">
+                <input type="radio" name="tenantPresent" id="tenantYes" value="yes" />
+                <label for="tenantYes">Yes</label>
+                <input type="radio" name="tenantPresent" id="tenantNo" value="no" checked />
+                <label for="tenantNo">No</label>
+              </div>
+            </div>
+            <div class="field">
+              <label class="label" for="tenantName">Tenant Name (if present)</label>
+              <input type="text" id="tenantName" />
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================
+             SECTION 2 — OVERVIEW
+             ============================================ -->
+        <section class="section" data-section="overview">
+          <h2 class="section-title">
+            <span class="num">ii.</span> Property Overview
+          </h2>
+
+          <div class="field">
+            <label class="label">Overall Condition</label>
+            <div class="condition-rating">
+              <input type="radio" name="condition" id="condExcellent" value="excellent" />
+              <label for="condExcellent">Excellent</label>
+              <input type="radio" name="condition" id="condGood" value="good" checked />
+              <label for="condGood">Good</label>
+              <input type="radio" name="condition" id="condFair" value="fair" />
+              <label for="condFair">Fair</label>
+              <input type="radio" name="condition" id="condPoor" value="poor" />
+              <label for="condPoor">Poor</label>
+              <input type="radio" name="condition" id="condMajor" value="major" />
+              <label for="condMajor">Major</label>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label">Overview Photos</label>
+            <p class="helper">Establishing shots — front, living, kitchen, baths, exterior.</p>
+            <div class="overview-photos" id="overviewPhotos"></div>
+            <button type="button" class="btn-add" id="addOverviewBtn" style="margin-top: var(--s3);">
+              + Add Overview Photo
+            </button>
+          </div>
+
+          <div class="field">
+            <label class="label" for="overviewNotes">General Walkthrough Notes</label>
+            <textarea id="overviewNotes" placeholder="Overall impression, anything notable…"></textarea>
+          </div>
+        </section>
+
+        <!-- ============================================
+             SECTION 3 — LIFE-SAFETY
+             ============================================ -->
+        <section class="section" data-section="life-safety">
+          <h2 class="section-title">
+            <span class="num">iii.</span> Life-Safety Systems
+          </h2>
+          <p class="page-subtitle" style="margin-bottom: var(--s4)">
+            LA code requires hardwired smoke alarms in every bedroom and combo
+            (smoke/CO) alarms in hallways near bedrooms.
+          </p>
+
+          <div class="check-grid">
+            <div class="check-row">
+              <div>
+                <div class="check-row-label">Smoke Alarms</div>
+                <div class="check-row-sub">Required in every bedroom.</div>
+              </div>
+              <div class="check-counts">
+                <div class="count-cell">
+                  <input type="number" min="0" class="count-input" id="smokeWorking" placeholder="0" />
+                  <span class="count-label">Work</span>
+                </div>
+                <div class="count-cell">
+                  <input type="number" min="0" class="count-input" id="smokeTotal" placeholder="0" />
+                  <span class="count-label">Total</span>
+                </div>
+                <div class="count-cell">
+                  <input type="number" min="0" class="count-input" id="smokeReplaced" placeholder="0" />
+                  <span class="count-label">Repl.</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="check-row">
+              <div>
+                <div class="check-row-label">Combo Alarms (Smoke/CO)</div>
+                <div class="check-row-sub">Required in hallways near bedrooms.</div>
+              </div>
+              <div class="check-counts">
+                <div class="count-cell">
+                  <input type="number" min="0" class="count-input" id="comboWorking" placeholder="0" />
+                  <span class="count-label">Work</span>
+                </div>
+                <div class="count-cell">
+                  <input type="number" min="0" class="count-input" id="comboTotal" placeholder="0" />
+                  <span class="count-label">Total</span>
+                </div>
+                <div class="count-cell">
+                  <input type="number" min="0" class="count-input" id="comboReplaced" placeholder="0" />
+                  <span class="count-label">Repl.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="field-row" style="margin-top: var(--s4)">
+            <div class="field">
+              <label class="label">All Alarms Hardwired?</label>
+              <div class="status-buttons">
+                <input type="radio" name="alarmsHardwired" id="hwYes" value="yes" />
+                <label for="hwYes" class="status-ok">Yes</label>
+                <input type="radio" name="alarmsHardwired" id="hwPartial" value="partial" />
+                <label for="hwPartial" class="status-warn">Partial</label>
+                <input type="radio" name="alarmsHardwired" id="hwNo" value="no" />
+                <label for="hwNo" class="status-issue">Battery Only</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="quick-add-block">
+            <div class="quick-add-label">Quick Add — repairs done on-site</div>
+            <div class="quick-add-chips" data-chips-context="life-safety"></div>
+          </div>
+
+          <button type="button" class="btn-add btn-add-issue" data-add-issue-from="Life-Safety">
+            + Add Issue here
+          </button>
+        </section>
+
+        <!-- ============================================
+             SECTION 4 — WATER
+             ============================================ -->
+        <section class="section" data-section="water">
+          <h2 class="section-title">
+            <span class="num">iv.</span> Water Inspection
+          </h2>
+          <p class="page-subtitle" style="margin-bottom: var(--s4)">
+            Water is the #1 damage agent. Glance under each sink with a flashlight.
+            Tap "Issue" or "Repaired" to document.
+          </p>
+
+          <div id="wetAreaList"></div>
+
+          <button type="button" class="btn-add" id="addWetAreaBtn" style="margin-top: var(--s3);">
+            + Add Wet Area
+          </button>
+
+          <div class="field" style="margin-top: var(--s5);">
+            <label class="label" for="waterNotes">Other Water Notes</label>
+            <p class="helper">Visible damage, stains, dampness anywhere else.</p>
+            <textarea id="waterNotes" placeholder="Stains on ceilings, damp baseboards, signs of past leaks…"></textarea>
+          </div>
+
+          <div class="quick-add-block">
+            <div class="quick-add-label">Quick Add — repairs done on-site</div>
+            <div class="quick-add-chips" data-chips-context="water"></div>
+          </div>
+
+          <button type="button" class="btn-add btn-add-issue" data-add-issue-from="Water">
+            + Add Issue here
+          </button>
+        </section>
+
+        <!-- ============================================
+             SECTION 5 — WATER HEATER
+             ============================================ -->
+        <section class="section" data-section="water-heater">
+          <h2 class="section-title">
+            <span class="num">v.</span> Water Heater
+          </h2>
+
+          <div class="field">
+            <label class="label">In-Unit Water Heater?</label>
+            <div class="toggle-group">
+              <input type="radio" name="whPresent" id="whYes" value="yes" checked />
+              <label for="whYes">Yes</label>
+              <input type="radio" name="whPresent" id="whNo" value="no" />
+              <label for="whNo">No / Shared</label>
+            </div>
+          </div>
+
+          <div id="waterHeaterDetail">
+            <div class="field-row">
+              <div class="field">
+                <label class="label" for="whLocation">Location</label>
+                <input type="text" id="whLocation" placeholder="Garage, closet…" />
+              </div>
+              <div class="field">
+                <label class="label" for="whType">Type</label>
+                <select id="whType">
+                  <option value="">—</option>
+                  <option value="gas">Gas</option>
+                  <option value="electric">Electric</option>
+                  <option value="tankless-gas">Tankless (Gas)</option>
+                  <option value="tankless-electric">Tankless (Electric)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="label">Seismic Strapping (CA Code: Double Required)</label>
+              <div class="status-buttons">
+                <input type="radio" name="whStraps" id="strapsDouble" value="double" />
+                <label for="strapsDouble" class="status-ok">Double Straps</label>
+                <input type="radio" name="whStraps" id="strapsSingle" value="single" />
+                <label for="strapsSingle" class="status-warn">Single Only</label>
+                <input type="radio" name="whStraps" id="strapsMissing" value="missing" />
+                <label for="strapsMissing" class="status-issue">Missing</label>
+                <input type="radio" name="whStraps" id="strapsReplaced" value="replaced" />
+                <label for="strapsReplaced" class="status-replaced">Installed Today</label>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="label">Overall Condition</label>
+              <div class="status-buttons">
+                <input type="radio" name="whCondition" id="whGood" value="good" checked />
+                <label for="whGood" class="status-ok">Good</label>
+                <input type="radio" name="whCondition" id="whAging" value="aging" />
+                <label for="whAging" class="status-warn">Aging</label>
+                <input type="radio" name="whCondition" id="whFailing" value="failing" />
+                <label for="whFailing" class="status-issue">Failing</label>
+              </div>
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label class="label">T&amp;P Drain Pipe</label>
+                <div class="status-buttons">
+                  <input type="radio" name="whTP" id="tpOk" value="ok" checked />
+                  <label for="tpOk" class="status-ok">Proper</label>
+                  <input type="radio" name="whTP" id="tpIssue" value="issue" />
+                  <label for="tpIssue" class="status-issue">Issue</label>
+                </div>
+              </div>
+              <div class="field">
+                <label class="label">Visible Leaks / Rust</label>
+                <div class="status-buttons">
+                  <input type="radio" name="whLeaks" id="whlNone" value="none" checked />
+                  <label for="whlNone" class="status-ok">None</label>
+                  <input type="radio" name="whLeaks" id="whlSome" value="some" />
+                  <label for="whlSome" class="status-issue">Yes</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="label">Photo &amp; Notes (optional)</label>
+              <label class="photo-button" id="whPhotoBtn">
+                <span class="icon">+</span>
+                <span class="text">Add photo</span>
+                <input type="file" accept="image/*" capture="environment" multiple class="wh-photo-input" />
+              </label>
+              <div class="photo-strip" id="whPhotoStrip" style="margin-bottom: var(--s3);"></div>
+              <textarea id="whNotes" placeholder="Notes about the water heater…"></textarea>
+            </div>
+
+            <div class="quick-add-block">
+              <div class="quick-add-label">Quick Add — repairs done on-site</div>
+              <div class="quick-add-chips" data-chips-context="water-heater"></div>
+            </div>
+
+            <button type="button" class="btn-add btn-add-issue" data-add-issue-from="Water Heater">
+              + Add Issue here
+            </button>
+          </div>
+        </section>
+
+        <!-- ============================================
+             SECTION 6 — HAZARDS
+             ============================================ -->
+        <section class="section" data-section="hazards">
+          <h2 class="section-title">
+            <span class="num">vi.</span> Hazards &amp; Property Conditions
+          </h2>
+          <p class="page-subtitle" style="margin-bottom: var(--s4)">
+            Liability flags — overgrown vegetation, loose weather heads, trip
+            hazards, drainage. Roof from ground only.
+          </p>
+
+          <div id="hazardList"></div>
+
+          <button type="button" class="btn-add" id="addHazardBtn" style="margin-top: var(--s3);">
+            + Add Hazard / Item Needing Attention
+          </button>
+        </section>
+
+        <!-- ============================================
+             SECTION 7 — UNIVERSAL ISSUES
+             ============================================ -->
+        <section class="section" data-section="issues">
+          <h2 class="section-title">
+            <span class="num">vii.</span> Issues &amp; Repairs
+          </h2>
+          <p class="page-subtitle" style="margin-bottom: var(--s4)">
+            Auto-populated from quick-add chips and "Add Issue" buttons across the form.
+            Status drives where each item goes.
+          </p>
+
+          <div class="quick-add-block quick-add-block-prominent">
+            <div class="quick-add-block-header">
+              <div class="quick-add-label">Quick Add — full catalog</div>
+              <button type="button" class="btn-link" id="manageCatalogBtn">Manage Catalog</button>
+            </div>
+            <div class="quick-add-chips" data-chips-context="all"></div>
+          </div>
+
+          <div class="items-list" id="issuesList"></div>
+
+          <button type="button" class="btn-add" id="addIssueBtn" style="margin-top: var(--s4)">
+            + Add Custom Issue
+          </button>
+        </section>
+
+        <!-- ============================================
+             SECTION 8 — INVOICE (auto)
+             ============================================ -->
+        <section class="section" id="invoiceSection" style="display: none">
+          <h2 class="section-title">
+            <span class="num">viii.</span> On-Site Repair Invoice
+          </h2>
+          <p class="page-subtitle" style="margin-bottom: var(--s4)">
+            Auto-populated from issues marked "Repaired On-Site". Limit per S&amp;L
+            authorization: $500 per unit.
+          </p>
+
+          <div class="totals" id="invoiceTotals">
+            <div class="totals-row">
+              <span class="label">Parts &amp; Materials</span>
+              <span class="val" id="totalParts">$0.00</span>
+            </div>
+            <div class="totals-row">
+              <span class="label">Labor</span>
+              <span class="val" id="totalLabor">$0.00</span>
+            </div>
+            <div class="totals-row grand">
+              <span class="label">Total Due</span>
+              <span class="val" id="totalGrand">$0.00</span>
+            </div>
+            <div class="threshold-warning" id="thresholdWarning">
+              Total exceeds $500 — requires approval before performing repairs
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================
+             SECTION 9 — ESTIMATE FOLLOWUPS (auto)
+             ============================================ -->
+        <section class="section" id="estimateSection" style="display: none">
+          <h2 class="section-title">
+            <span class="num">ix.</span> Estimate Follow-Ups
+          </h2>
+          <p class="page-subtitle" style="margin-bottom: 0">
+            <span id="estimateCount">0</span> item(s) flagged for estimate.
+            Tap "→ Walkthrough" below to send these to the estimate form.
+          </p>
+        </section>
+
+        <!-- ACTIONS -->
+        <div class="actions-bar">
+          <button type="button" class="btn" id="generatePdfBtn">
+            Generate PDF
+          </button>
+          <button type="button" class="btn btn-secondary" id="exportJsonBtn">
+            Export JSON
+          </button>
+          <button type="button" class="btn btn-secondary" id="exportEstimateBtn">
+            → Walkthrough
+          </button>
+          <button type="button" class="btn btn-secondary" id="clearBtn">
+            Clear
+          </button>
+        </div>
+
+        <p class="status-line" id="statusLine">Auto-saving locally · Draft persists across sessions</p>
+      </form>
+    </main>
+
+    <!-- Catalog management modal -->
+    <div
+      id="catalogPanel"
+      style="
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(10, 37, 64, 0.85);
+        z-index: 100;
+        padding: 32px 16px;
+        overflow-y: auto;
+      "
+    >
+      <div
+        style="
+          max-width: 600px;
+          margin: 0 auto;
+          background: var(--paper);
+          padding: 32px;
+          border: 1px solid var(--rule);
+        "
+      >
+        <h2 class="page-title" style="font-size: 28px; margin-bottom: 8px">
+          Manage <span class="ampersand">&</span> Catalog
+        </h2>
+        <p class="page-subtitle" style="margin-bottom: 24px">
+          Edit your common repair items, prices, and which sections they appear in.
+          Changes save automatically.
+        </p>
+        <div id="catalogEditor"></div>
+        <button
+          type="button"
+          class="btn-add"
+          id="addCatalogItemBtn"
+          style="margin-top: 16px"
+        >
+          + Add Catalog Item
+        </button>
+        <div class="actions-bar" style="position: static; margin-top: 24px">
+          <button type="button" class="btn" id="closeCatalogBtn">Done</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="lightbox" id="lightbox"><img src="" alt="" id="lightboxImg" /></div>
+
+    <script src="shared.js"></script>
+    <script src="inspection.js"></script>
+  </body>
+</html>

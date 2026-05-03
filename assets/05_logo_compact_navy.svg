@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 240" width="400" height="240">
+  <title>Blue Wave Construction - Compact Stacked Lockup</title>
+  <text x="200" y="100" text-anchor="middle" font-family="Inter Tight, Helvetica Neue, Arial, sans-serif" font-weight="500" font-size="44" fill="#0A2540" letter-spacing="8">BLUE WAVE</text>
+  <path d="M 110 125 Q 140 116, 170 125 T 230 125 T 290 125" stroke="#1B6CA8" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <text x="200" y="155" text-anchor="middle" font-family="Inter Tight, Helvetica Neue, Arial, sans-serif" font-weight="400" font-size="9" fill="#0A2540" letter-spacing="13">CONSTRUCTION</text>
+</svg>

@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#0A2540" />
+    <title>Walkthrough — Blue Wave Construction</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  </head>
+  <body>
+    <main class="app">
+      <header class="app-header">
+        <a href="index.html" style="text-decoration: none">
+          <img
+            src="assets/01_logo_horizontal_navy.svg"
+            alt="Blue Wave Construction"
+            class="logo"
+          />
+        </a>
+        <div class="meta">
+          Field Form <span class="sep">·</span> No. 02
+          <span class="sep">·</span>
+          <span id="estimateIdDisplay">BWC-EST-…</span>
+        </div>
+      </header>
+
+      <h1 class="page-title">
+        Jobsite <span class="ampersand">&</span> Walkthrough Estimate
+      </h1>
+      <svg class="title-wave" viewBox="0 0 64 8" xmlns="http://www.w3.org/2000/svg">
+        <path d="M 1 4 Q 9 1, 17 4 T 33 4 T 49 4 T 63 4" />
+      </svg>
+      <p class="page-subtitle">
+        Walk the property with the customer. Tap items from the catalog, add
+        free-text items as needed, attach photos. Generate a branded estimate
+        PDF on the spot.
+      </p>
+
+      <form id="walkthroughForm" autocomplete="off">
+        <!-- ============================================
+             SECTION 1 — JOB INFO
+             ============================================ -->
+        <section class="section">
+          <h2 class="section-title">
+            <span class="num">i.</span> Customer &amp; Property
+          </h2>
+
+          <div class="field-row">
+            <div class="field">
+              <label class="label" for="customerName">
+                Customer Name <span class="required">*</span>
+              </label>
+              <input type="text" id="customerName" required />
+            </div>
+            <div class="field">
+              <label class="label" for="customerEmail">Customer Email</label>
+              <input type="email" id="customerEmail" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label" for="propertyAddress">
+              Property Address <span class="required">*</span>
+            </label>
+            <input
+              type="text"
+              id="propertyAddress"
+              placeholder="123 Main St, City, CA"
+              required
+            />
+          </div>
+
+          <div class="field-row thirds">
+            <div class="field">
+              <label class="label" for="walkthroughDate">
+                Date <span class="required">*</span>
+              </label>
+              <input type="date" id="walkthroughDate" required />
+            </div>
+            <div class="field">
+              <label class="label" for="customerPhone">Phone</label>
+              <input type="tel" id="customerPhone" />
+            </div>
+            <div class="field">
+              <label class="label" for="referenceId">Ref. Inspection #</label>
+              <input
+                type="text"
+                id="referenceId"
+                placeholder="BWC-INS-2026-…"
+              />
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label" for="scopeNotes">Project / Scope Notes</label>
+            <textarea
+              id="scopeNotes"
+              placeholder="Pre-listing prep, post-tenant turnover, full punchlist…"
+            ></textarea>
+          </div>
+        </section>
+
+        <!-- ============================================
+             SECTION 2 — CATALOG
+             ============================================ -->
+        <section class="section">
+          <h2 class="section-title">
+            <span class="num">ii.</span> Common Items — Tap to Add
+          </h2>
+          <div class="catalog" id="catalog"></div>
+          <button type="button" class="btn-add" id="addCustomBtn">
+            + Add Custom Item
+          </button>
+        </section>
+
+        <!-- ============================================
+             SECTION 3 — LINE ITEMS
+             ============================================ -->
+        <section class="section">
+          <h2 class="section-title">
+            <span class="num">iii.</span> Estimate Line Items
+          </h2>
+          <div class="items-list" id="lineItems"></div>
+          <p
+            class="page-subtitle"
+            id="emptyLineMessage"
+            style="margin-top: var(--s4); text-align: center"
+          >
+            No items added yet — tap from the catalog above or add a custom item.
+          </p>
+        </section>
+
+        <!-- ============================================
+             SECTION 4 — TOTALS
+             ============================================ -->
+        <section class="section" id="totalsSection" style="display: none">
+          <h2 class="section-title">
+            <span class="num">iv.</span> Estimate Total
+          </h2>
+          <div class="totals">
+            <div class="totals-row">
+              <span class="label">Subtotal</span>
+              <span class="val" id="subtotalDisplay">$0.00</span>
+            </div>
+            <div class="totals-row grand">
+              <span class="label">Estimated Total</span>
+              <span class="val" id="grandTotalDisplay">$0.00</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================
+             ACTIONS BAR
+             ============================================ -->
+        <div class="actions-bar">
+          <button type="button" class="btn" id="generatePdfBtn">
+            Generate PDF
+          </button>
+          <button type="button" class="btn btn-secondary" id="exportJsonBtn">
+            Export JSON
+          </button>
+          <button type="button" class="btn btn-secondary" id="manageCatalogBtn">
+            Manage Catalog
+          </button>
+          <button type="button" class="btn btn-secondary" id="clearBtn">
+            Clear
+          </button>
+        </div>
+
+        <p class="status-line" id="statusLine">
+          Auto-saving locally · Catalog editable
+        </p>
+      </form>
+    </main>
+
+    <!-- Catalog management modal (simple inline panel) -->
+    <div
+      id="catalogPanel"
+      style="
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(10, 37, 64, 0.85);
+        z-index: 100;
+        padding: 32px 16px;
+        overflow-y: auto;
+      "
+    >
+      <div
+        style="
+          max-width: 600px;
+          margin: 0 auto;
+          background: var(--paper);
+          padding: 32px;
+          border: 1px solid var(--rule);
+        "
+      >
+        <h2 class="page-title" style="font-size: 28px; margin-bottom: 8px">
+          Manage <span class="ampersand">&</span> Catalog
+        </h2>
+        <p class="page-subtitle" style="margin-bottom: 24px">
+          Edit your common repair items and prices. Changes save automatically
+          and appear immediately on the form.
+        </p>
+        <div id="catalogEditor"></div>
+        <button
+          type="button"
+          class="btn-add"
+          id="addCatalogItemBtn"
+          style="margin-top: 16px"
+        >
+          + Add Catalog Item
+        </button>
+        <div class="actions-bar" style="position: static; margin-top: 24px">
+          <button type="button" class="btn" id="closeCatalogBtn">Done</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="lightbox" id="lightbox"><img src="" alt="" id="lightboxImg" /></div>
+
+    <script src="shared.js"></script>
+    <script src="walkthrough.js"></script>
+  </body>
+</html>

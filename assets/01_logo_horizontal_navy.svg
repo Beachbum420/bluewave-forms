@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 280" width="800" height="280">
+  <title>Blue Wave Construction - Primary Horizontal Logo - Navy on Light</title>
+  <text x="400" y="125" text-anchor="middle" font-family="Inter Tight, Helvetica Neue, Arial, sans-serif" font-weight="500" font-size="76" fill="#0A2540" letter-spacing="14">BLUE WAVE</text>
+  <path d="M 270 165 Q 305 152, 340 165 T 410 165 T 480 165 T 530 165" stroke="#1B6CA8" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <text x="400" y="210" text-anchor="middle" font-family="Inter Tight, Helvetica Neue, Arial, sans-serif" font-weight="400" font-size="13" fill="#0A2540" letter-spacing="22">CONSTRUCTION</text>
+</svg>

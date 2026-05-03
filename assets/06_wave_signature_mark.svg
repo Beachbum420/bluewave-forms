@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 60" width="400" height="60">
+  <title>Blue Wave Construction - Wave Signature Mark</title>
+  <path d="M 30 30 Q 65 12, 100 30 T 170 30 T 240 30 T 310 30 T 370 30" stroke="#1B6CA8" stroke-width="3" fill="none" stroke-linecap="round"/>
+</svg>
