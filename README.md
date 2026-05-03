@@ -1,6 +1,6 @@
-# Blue Wave Construction — Field Forms (v3)
+# Blue Wave Construction — Field Forms (v3 + Customer Intake)
 
-Mobile-first field forms for property inspections and walkthrough estimates. Hosted on GitHub Pages, runs entirely in the browser, no backend needed.
+Mobile-first forms for property inspections, walkthrough estimates, and customer project intake.
 
 **Live:** https://beachbum420.github.io/bluewave-forms/
 
@@ -8,87 +8,90 @@ Mobile-first field forms for property inspections and walkthrough estimates. Hos
 
 ## What's in this folder
 
-| File | Purpose |
-|---|---|
-| `index.html` | Landing page with the two tool cards |
-| `inspection.html` | Property & unit inspection form |
-| `inspection.js` | Inspection form logic + PDF generation |
-| `walkthrough.html` | Jobsite walkthrough estimate form |
-| `walkthrough.js` | Estimate form logic + PDF generation |
-| `shared.js` | Shared helpers — PDF header/footer, photos, autosave |
-| `styles.css` | All styling — Blue Wave brand system |
-| `assets/` | SVG logos |
+| File | Purpose | Audience |
+|---|---|---|
+| `index.html` | Landing page — your two internal tools | You |
+| `inspection.html` | Property & unit inspection form | You (in field) |
+| `inspection.js` | Inspection logic + PDF generation | — |
+| `walkthrough.html` | Jobsite walkthrough estimate | You (with customer) |
+| `walkthrough.js` | Walkthrough logic + PDF | — |
+| `customer-intake.html` | **NEW** — Customer-fills-it-out punchlist intake | Your customers |
+| `customer-intake.js` | Intake logic + Formspree submission | — |
+| `shared.js` | Shared helpers (PDF, photos, autosave) | — |
+| `styles.css` | Brand styling for everything | — |
 
 ---
 
-## V3 — What's different from v2
+## Customer Intake — Setup (one-time)
 
-**Simplified inspection form:**
-- Removed mode toggle entirely — one form optimized for apartments, handles SFRs through universal issue cards
-- Wet areas collapsed to a single status (Good / Issue / Repaired) per area instead of 6+ toggles
-- Quick-add chips no longer scroll the page — confirmation toast slides in from the bottom
-- Editable catalog (mirrors walkthrough's pattern) — add, remove, edit prices, set which sections each chip appears in
+The intake form needs to know where to send submissions. Set this up once:
 
-**Universal Issues system:**
-- Quick-add chips, section "Add Issue" buttons, and the manual button all create issue cards
-- Status (Informational / Repaired On-Site / Needs Estimate) drives where the item routes
-- Repaired → invoice (capped at $500), Needs Estimate → walkthrough handoff, Informational → report only
-- One unified data model, clean JSON export structure for OpenClaw
+1. Sign up at https://formspree.io (free tier: 50 submissions/month)
+2. Create a new form, set delivery email to `ryanverbiest@gmail.com`
+3. Copy your form endpoint URL (looks like `https://formspree.io/f/xkgjabcd`)
+4. Open `customer-intake.js` in your editor
+5. Find this line near the top:
+   ```javascript
+   const FORMSPREE_ENDPOINT = "";
+   ```
+6. Paste your URL between the quotes:
+   ```javascript
+   const FORMSPREE_ENDPOINT = "https://formspree.io/f/xkgjabcd";
+   ```
+7. Save, push to GitHub. Done.
 
-**Bug fixes from v2:**
-- Wet area photo bug fixed (auto-seeded areas now properly initialize photos array)
-- All photo-handling paths use the same defensive pattern
-
-**What stayed exactly the same:**
-- Walkthrough form (untouched)
-- Brand, header, footer, PDF style
-- Auto-save, ID generation
-- Photo Appendix in PDF
+If you skip this, the form will download submissions as JSON files instead — useful for testing.
 
 ---
 
-## Workflow
+## How to share the intake form with customers
 
-### Inspection
-1. Open the form, fill in property info (address, unit, date)
-2. Rate overall condition + add overview photos
-3. Run through life-safety, water inspection, water heater, hazards
-4. Use quick-add chips OR "Add Issue" buttons in each section to log repairs/issues
-5. Each issue gets status: Informational / Repaired / Needs Estimate
-6. Repaired items → auto-populate the on-site invoice (capped at $500)
-7. Estimate items → "→ Walkthrough" button hands them off
-8. Generate PDF
+Once deployed, the URL is:
 
-### Walkthrough
-Same as before — catalog tap-to-add line items, generate estimate PDF.
+```
+https://beachbum420.github.io/bluewave-forms/customer-intake.html
+```
+
+Text or email that link. Customers fill it out on their phone, hit submit, you get an email with all the details + photos as attachments.
+
+**Customer experience:**
+1. Opens link → sees Blue Wave branded form
+2. Fills in contact info, property address, project overview
+3. Adds line items with descriptions + photos (3 max per item)
+4. Hits "Send to Blue Wave"
+5. Gets a confirmation screen with a request ID
+
+**Your experience:**
+1. Get an email from Formspree with all the info formatted neatly
+2. Photos arrive as attachments
+3. Review, prep an estimate (in your walkthrough form), send it back
+4. Eventually OpenClaw will read submissions and draft estimates automatically
 
 ---
 
-## Catalog Management
+## V3 — Inspection form changes (from v2)
 
-The inspection form has its own editable catalog (separate from the walkthrough's). Tap "Manage Catalog" above the Issues section to:
-- Edit prices, descriptions, names
-- Add custom items
-- Set which sections each item appears in (Life-Safety, Water, Water Heater, Full Catalog)
-- Remove items
-
-Catalog persists in localStorage on the device.
+- Removed mode toggle — one simplified form
+- Wet areas are one-line (Good / Issue / Repaired) instead of 6+ toggles
+- Quick-add chips no longer scroll the page (toast confirmation slides in)
+- Editable catalog (mirrors walkthrough's pattern)
+- Universal `issues[]` system — clean JSON for OpenClaw
 
 ---
 
 ## Deploy
 
-1. Push these files to your `bluewave-forms` repo on `main`
+1. Push to your `bluewave-forms` repo on `main`
 2. GitHub Pages serves from `main` branch root
 3. Live in 1-2 minutes
 
+If using Claude Code: `cd ~/path/to/bluewave-forms && git add . && git commit -m "v3 + customer intake" && git push`
+
 ---
 
-## License
+## ID Format
 
-- Brand: Blue Wave Construction
-- License: CA GC #1153965
-- Document IDs:
-  - `BWC-INS-2026-0001` (inspection reports)
-  - `BWC-INV-2026-0001` (invoices, embedded in inspections)
-  - `BWC-EST-2026-0001` (estimates from walkthrough form)
+- `BWC-INS-2026-0001` (inspection reports)
+- `BWC-INV-2026-0001` (invoices)
+- `BWC-EST-2026-0001` (estimates from walkthrough)
+- `BWC-REQ-2026-XXXXXX` (customer intake requests — last 6 digits of timestamp)

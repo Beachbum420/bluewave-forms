@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#0A2540" />
+    <title>Project Intake — Blue Wave Construction</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="intake">
+
+      <!-- ============================================
+           HEADER
+           ============================================ -->
+      <header class="intake-header">
+        <img
+          src="assets/01_logo_horizontal_navy.svg"
+          alt="Blue Wave Construction"
+          class="intake-logo"
+        />
+        <div class="intake-eyebrow">Project Intake</div>
+        <h1 class="intake-title">
+          Tell us about<br /><em>your project.</em>
+        </h1>
+        <p class="intake-lede">
+          Walk us through what you'd like done. Add as much detail as you can —
+          photos, descriptions, anything that helps us understand the scope.
+          We'll review and follow up with an estimate shortly.
+        </p>
+      </header>
+
+      <form id="intakeForm" autocomplete="on">
+
+        <!-- ============================================
+             SECTION 1 — ABOUT YOU
+             ============================================ -->
+        <section class="intake-section">
+          <div class="intake-section-num">i.</div>
+          <h2 class="intake-section-title">About You</h2>
+
+          <div class="field">
+            <label class="label" for="customerName">
+              Your Name <span class="required">*</span>
+            </label>
+            <input type="text" id="customerName" name="name" required autocomplete="name" />
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label class="label" for="customerPhone">
+                Phone <span class="required">*</span>
+              </label>
+              <input type="tel" id="customerPhone" name="phone" required autocomplete="tel" />
+            </div>
+            <div class="field">
+              <label class="label" for="customerEmail">
+                Email <span class="required">*</span>
+              </label>
+              <input type="email" id="customerEmail" name="email" required autocomplete="email" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label">Preferred Contact Method</label>
+            <div class="toggle-group" role="radiogroup">
+              <input type="radio" name="contactPref" id="prefText" value="text" checked />
+              <label for="prefText">Text</label>
+              <input type="radio" name="contactPref" id="prefCall" value="call" />
+              <label for="prefCall">Call</label>
+              <input type="radio" name="contactPref" id="prefEmail" value="email" />
+              <label for="prefEmail">Email</label>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================
+             SECTION 2 — PROPERTY
+             ============================================ -->
+        <section class="intake-section">
+          <div class="intake-section-num">ii.</div>
+          <h2 class="intake-section-title">The Property</h2>
+
+          <div class="field">
+            <label class="label" for="propertyAddress">
+              Project Address <span class="required">*</span>
+            </label>
+            <input
+              type="text"
+              id="propertyAddress"
+              name="address"
+              required
+              placeholder="123 Main St, Manhattan Beach, CA"
+              autocomplete="street-address"
+            />
+          </div>
+
+          <div class="field">
+            <label class="label" for="propertyType">Property Type</label>
+            <select id="propertyType" name="propertyType">
+              <option value="">—</option>
+              <option value="single-family">Single-family home</option>
+              <option value="condo">Condo / Townhouse</option>
+              <option value="apartment">Apartment / Multi-unit</option>
+              <option value="commercial">Commercial</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label class="label" for="accessNotes">
+              Access Notes <span class="optional">optional</span>
+            </label>
+            <p class="helper">
+              Anything we should know about visiting the property — lockbox code,
+              tenant, dog, gate, parking, etc.
+            </p>
+            <textarea
+              id="accessNotes"
+              name="accessNotes"
+              placeholder="e.g. Lockbox on the front gate, code 1234. Friendly dog in the yard."
+            ></textarea>
+          </div>
+        </section>
+
+        <!-- ============================================
+             SECTION 3 — PROJECT OVERVIEW
+             ============================================ -->
+        <section class="intake-section">
+          <div class="intake-section-num">iii.</div>
+          <h2 class="intake-section-title">Project Overview</h2>
+
+          <div class="field">
+            <label class="label" for="projectOverview">
+              In a sentence or two, what are you trying to accomplish?
+            </label>
+            <p class="helper">
+              The big picture — kitchen remodel, post-tenant punchlist, listing prep,
+              specific repairs. We'll dig into the details below.
+            </p>
+            <textarea
+              id="projectOverview"
+              name="overview"
+              placeholder="e.g. Getting the property ready to list — a few small repairs, paint touch-up, and the back gate needs to be fixed."
+            ></textarea>
+          </div>
+
+          <div class="field">
+            <label class="label">Ideal Timeline</label>
+            <div class="status-buttons">
+              <input type="radio" name="timeline" id="timeAsap" value="asap" />
+              <label for="timeAsap" class="status-issue">As soon as possible</label>
+              <input type="radio" name="timeline" id="timeMonth" value="this-month" />
+              <label for="timeMonth" class="status-warn">This month</label>
+              <input type="radio" name="timeline" id="timeFlexible" value="flexible" checked />
+              <label for="timeFlexible" class="status-ok">Flexible</label>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label">
+              Approximate Budget <span class="optional">optional</span>
+            </label>
+            <p class="helper">
+              Sharing a range helps us scope appropriately. No pressure if you'd
+              rather we estimate first.
+            </p>
+            <select id="budget" name="budget">
+              <option value="">Prefer not to say</option>
+              <option value="under-1k">Under $1,000</option>
+              <option value="1k-5k">$1,000 – $5,000</option>
+              <option value="5k-15k">$5,000 – $15,000</option>
+              <option value="15k-50k">$15,000 – $50,000</option>
+              <option value="50k-plus">$50,000+</option>
+              <option value="open">Open / unsure</option>
+            </select>
+          </div>
+        </section>
+
+        <!-- ============================================
+             SECTION 4 — LINE ITEMS
+             ============================================ -->
+        <section class="intake-section">
+          <div class="intake-section-num">iv.</div>
+          <h2 class="intake-section-title">Your Punchlist</h2>
+          <p class="intake-section-helper">
+            Add one card per task. Photos help us estimate accurately —
+            even a quick snap is plenty. You can add as many items as you need.
+          </p>
+
+          <div id="lineItemsList"></div>
+
+          <button type="button" class="btn-add" id="addLineItemBtn">
+            + Add Another Item
+          </button>
+
+          <p class="line-item-empty-msg" id="lineItemEmptyMsg">
+            No items added yet — tap "Add Another Item" above to start.
+          </p>
+        </section>
+
+        <!-- ============================================
+             SECTION 5 — ANYTHING ELSE
+             ============================================ -->
+        <section class="intake-section">
+          <div class="intake-section-num">v.</div>
+          <h2 class="intake-section-title">Anything Else?</h2>
+
+          <div class="field">
+            <label class="label" for="additionalNotes">
+              Final notes <span class="optional">optional</span>
+            </label>
+            <p class="helper">
+              Anything else we should know? Concerns, preferences,
+              previous work that's been done, etc.
+            </p>
+            <textarea id="additionalNotes" name="additionalNotes"></textarea>
+          </div>
+        </section>
+
+        <!-- ============================================
+             SUBMIT
+             ============================================ -->
+        <div class="intake-submit-wrap">
+          <button type="submit" class="btn btn-large" id="submitBtn">
+            Send to Blue Wave
+          </button>
+          <p class="intake-submit-fineprint">
+            Once you submit, Ryan will review your request and follow up shortly.
+          </p>
+        </div>
+
+      </form>
+
+      <!-- ============================================
+           THANK YOU PANEL (shown after submit)
+           ============================================ -->
+      <div id="thankYouPanel" class="intake-thank-you" style="display: none">
+        <svg class="thank-you-wave" viewBox="0 0 120 16" xmlns="http://www.w3.org/2000/svg">
+          <path d="M 2 8 Q 17 1, 32 8 T 62 8 T 92 8 T 118 8" />
+        </svg>
+
+        <h2 class="thank-you-title">
+          Thank you,<br /><em><span id="thankYouName">friend</span>.</em>
+        </h2>
+
+        <p class="thank-you-body">
+          We've got your request. Ryan will review the details and reach out
+          shortly to discuss next steps.
+        </p>
+
+        <div class="thank-you-meta">
+          <div class="thank-you-meta-row">
+            <span class="thank-you-meta-label">Request ID</span>
+            <span class="thank-you-meta-val" id="thankYouRequestId">—</span>
+          </div>
+          <div class="thank-you-meta-row">
+            <span class="thank-you-meta-label">Items submitted</span>
+            <span class="thank-you-meta-val" id="thankYouCount">—</span>
+          </div>
+        </div>
+
+        <p class="thank-you-contact">
+          Questions in the meantime?<br />
+          <a href="mailto:ryanverbiest@gmail.com">ryanverbiest@gmail.com</a>
+        </p>
+
+        <p class="thank-you-license">
+          Blue Wave Construction <span class="sep">·</span> CA GC #1153965
+        </p>
+      </div>
+
+      <!-- ============================================
+           SUBMITTING OVERLAY
+           ============================================ -->
+      <div id="submittingOverlay" class="intake-submitting" style="display: none">
+        <div class="submitting-inner">
+          <div class="submitting-spinner"></div>
+          <p>Sending your request…</p>
+        </div>
+      </div>
+
+    </main>
+
+    <div class="lightbox" id="lightbox"><img src="" alt="" id="lightboxImg" /></div>
+
+    <script src="shared.js"></script>
+    <script src="customer-intake.js"></script>
+  </body>
+</html>
