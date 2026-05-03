@@ -1596,9 +1596,9 @@ body[data-mode="apartment"] .apartment-only {
 }
 
 .intake-logo {
-  height: 36px;
+  height: 72px;
   width: auto;
-  margin-bottom: var(--s5);
+  margin-bottom: var(--s4);
 }
 
 .intake-eyebrow {
@@ -1607,16 +1607,16 @@ body[data-mode="apartment"] .apartment-only {
   text-transform: uppercase;
   color: var(--ink-faint);
   font-weight: 500;
-  margin-bottom: var(--s4);
+  margin-bottom: var(--s3);
 }
 
 .intake-title {
   font-family: var(--serif);
   font-weight: 300;
-  font-size: 44px;
-  line-height: 1.1;
+  font-size: 38px;
+  line-height: 1.15;
   color: var(--deep-navy);
-  margin: 0 0 var(--s5);
+  margin: 0 0 var(--s4);
   letter-spacing: -0.01em;
 }
 
@@ -1630,17 +1630,20 @@ body[data-mode="apartment"] .apartment-only {
   font-size: 15px;
   line-height: 1.7;
   color: var(--ink-soft);
-  max-width: 520px;
+  max-width: 460px;
   margin: 0 auto;
   font-family: var(--sans);
 }
 
 @media (max-width: 600px) {
   .intake-title {
-    font-size: 32px;
+    font-size: 28px;
   }
   .intake-lede {
     font-size: 14px;
+  }
+  .intake-logo {
+    height: 56px;
   }
 }
 
