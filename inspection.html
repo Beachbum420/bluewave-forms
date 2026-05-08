@@ -364,6 +364,25 @@
           <button type="button" class="btn-add" id="addHazardBtn" style="margin-top: var(--s3);">
             + Add Hazard / Item Needing Attention
           </button>
+
+          <div class="field" style="margin-top: var(--s5);">
+            <label class="label">Fire Extinguisher (2+ Unit Properties)</label>
+            <p class="helper">CA Title 25 §46 requires fire extinguishers in apartment houses. Check rear common area, laundry room, or stairway landing.</p>
+            <div class="status-buttons">
+              <input type="radio" name="fireExt" id="fireExtYes" value="yes" />
+              <label for="fireExtYes" class="status-ok">Present</label>
+              <input type="radio" name="fireExt" id="fireExtNo" value="no" />
+              <label for="fireExtNo" class="status-issue">Missing</label>
+              <input type="radio" name="fireExt" id="fireExtNA" value="na" checked />
+              <label for="fireExtNA" class="status-na">N/A</label>
+            </div>
+            <label class="photo-button" id="fireExtPhotoBtn" style="margin-top: var(--s3);">
+              <span class="icon">+</span>
+              <span class="text">Add photo</span>
+              <input type="file" accept="image/*" capture="environment" multiple class="fire-ext-photo-input" />
+            </label>
+            <div class="photo-strip" id="fireExtPhotoStrip"></div>
+          </div>
         </section>
 
         <!-- ============================================

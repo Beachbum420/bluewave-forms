@@ -35,6 +35,7 @@ let catalog = [];
 let overviewPhotos = [];   // [{ id, label, photo }]
 let wetAreas = [];         // [{ id, num, label, status, notes, photos }]
 let waterHeaterPhotos = [];
+let fireExtPhotos = [];
 let hazards = [];          // [{ id, num, category, description, severity, photos }]
 let issues = [];           // [{ id, num, location, description, status, partsCost, laborCost, photos, sourceCatalogId }]
 
@@ -78,6 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
   wireOverviewPhotos();
   wireWetAreas();
   wireWaterHeater();
+  wireFireExtinguisher();
   wireHazards();
   wireIssues();
   wireSectionAddIssueButtons();
@@ -664,6 +666,49 @@ function renderWaterHeaterPhotos() {
 }
 
 // ============================================
+// FIRE EXTINGUISHER
+// ============================================
+function wireFireExtinguisher() {
+  const input = document.querySelector(".fire-ext-photo-input");
+  input.addEventListener("change", async (e) => {
+    const files = Array.from(e.target.files || []);
+    for (const file of files) {
+      try {
+        const photo = await BWC.processPhoto(file);
+        fireExtPhotos.push(photo);
+      } catch (err) {
+        console.warn("Photo error:", err);
+      }
+    }
+    renderFireExtPhotos();
+    autosave();
+    input.value = "";
+  });
+}
+
+function renderFireExtPhotos() {
+  const strip = document.getElementById("fireExtPhotoStrip");
+  const btn = document.getElementById("fireExtPhotoBtn");
+  strip.innerHTML = "";
+  fireExtPhotos.forEach((p, idx) => {
+    const thumb = document.createElement("div");
+    thumb.className = "photo-thumb";
+    thumb.innerHTML = `<img src="${p.dataUrl}" alt="photo" /><button type="button" class="remove">×</button>`;
+    thumb.querySelector("img").addEventListener("click", () => openLightbox(p.dataUrl));
+    thumb.querySelector(".remove").addEventListener("click", (e) => {
+      e.stopPropagation();
+      fireExtPhotos.splice(idx, 1);
+      renderFireExtPhotos();
+      autosave();
+    });
+    strip.appendChild(thumb);
+  });
+  btn.classList.toggle("has-photos", fireExtPhotos.length > 0);
+  btn.querySelector(".text").textContent =
+    fireExtPhotos.length > 0 ? `${fireExtPhotos.length} photo${fireExtPhotos.length === 1 ? "" : "s"}` : "Add photo";
+}
+
+// ============================================
 // HAZARDS
 // ============================================
 function wireHazards() {
@@ -1004,6 +1049,8 @@ function collectFormData() {
     whLeaks: radioVal("whLeaks"),
     whNotes: f("whNotes").value,
     waterHeaterPhotos,
+    fireExt: radioVal("fireExt"),
+    fireExtPhotos,
     hazards,
     issues,
     nextOverviewNum, nextWetAreaNum, nextHazardNum, nextIssueNum,
@@ -1059,6 +1106,8 @@ function restoreDraft(d) {
     waterHeaterPhotos = d.waterHeaterPhotos;
     renderWaterHeaterPhotos();
   }
+  setRadio("fireExt", d.fireExt);
+  if (Array.isArray(d.fireExtPhotos)) { fireExtPhotos = d.fireExtPhotos; renderFireExtPhotos(); }
   if (Array.isArray(d.hazards)) d.hazards.forEach((h) => addHazard(h));
   if (Array.isArray(d.issues)) d.issues.forEach((i) => {
     issues.push(i);
@@ -1118,6 +1167,7 @@ function exportJson() {
     } : null,
     wetAreas: stripPhotos(data.wetAreas),
     hazards: stripPhotos(data.hazards),
+    fireExtinguisher: { status: data.fireExt, photoCount: data.fireExtPhotos.length },
     issues: stripPhotos(data.issues),
     invoiceItems: data.issues.filter((i) => i.status === "repaired").map((i) => ({
       location: i.location,
@@ -1417,6 +1467,34 @@ async function generatePdf() {
         cy += boxH + 4;
       }
       y = cy + 12;
+    }
+  }
+
+  // Fire Extinguisher (appended to Hazards section)
+  if (data.fireExt === "yes" || data.fireExt === "no") {
+    y = BWC.ensureRoom(doc, y, 50, headerOpts);
+    const feLabel = "Fire Extinguisher (Multi-unit)";
+    const feStatus = data.fireExt === "yes" ? "Present" : "Missing";
+    const feColor = data.fireExt === "yes" ? c.success : c.danger;
+
+    doc.setFillColor(...feColor);
+    doc.rect(margin, y, 3, 28, "F");
+    doc.setTextColor(...c.deepNavy);
+    doc.setFont("helvetica", "bold"); doc.setFontSize(10);
+    doc.text(feLabel, margin + 14, y + 12);
+    doc.setFont("helvetica", "bold"); doc.setFontSize(9);
+    doc.setTextColor(...feColor);
+    doc.text(feStatus, margin + contentW - 4, y + 12, { align: "right" });
+    y += 36;
+
+    const fePhotos = (data.fireExtPhotos || []).slice(0, 2);
+    if (fePhotos.length > 0) {
+      const boxW = 110, boxH = 70, gap = 6;
+      y = BWC.ensureRoom(doc, y, boxH + 10, headerOpts);
+      for (let i = 0; i < fePhotos.length; i++) {
+        await BWC.pdfPhoto(doc, fePhotos[i].dataUrl, margin + i * (boxW + gap), y, boxW, boxH);
+      }
+      y += boxH + 8;
     }
   }
 
