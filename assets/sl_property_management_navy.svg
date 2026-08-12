@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 280" width="800" height="280">
+  <title>S&amp;L Property Management - Horizontal Logo - Navy on Light</title>
+  <!-- Top divider rule -->
+  <line x1="250" y1="70" x2="550" y2="70" stroke="#0A2540" stroke-width="3"/>
+  <!-- S&L wordmark -->
+  <text x="400" y="160" text-anchor="middle" font-family="Inter Tight, Helvetica Neue, Arial, sans-serif" font-weight="700" font-size="88" fill="#0A2540" letter-spacing="6">S&amp;L</text>
+  <!-- Subtitle -->
+  <text x="400" y="200" text-anchor="middle" font-family="Inter Tight, Helvetica Neue, Arial, sans-serif" font-weight="400" font-size="20" fill="#0A2540" letter-spacing="10">PROPERTY MANAGEMENT</text>
+  <!-- Bottom divider rule -->
+  <line x1="250" y1="220" x2="550" y2="220" stroke="#0A2540" stroke-width="3"/>
+</svg>

@@ -27,21 +27,38 @@ const BWC = {
     contact: "Ryan Verbiest",
   },
 
+  // Per-brand header/footer identity. Inspection reports are issued under
+  // S&L Property Management; everything else stays Blue Wave Construction.
+  brands: {
+    bwc: {
+      name: "Blue Wave Construction",
+      license: "CA GC #1153965",
+      email: "ryanverbiest@gmail.com",
+      contact: "Ryan Verbiest",
+    },
+    sl: {
+      name: "S&L Property Management",
+      license: "",
+      email: "slpropertymanagement@gmail.com",
+      contact: "Ryan Verbiest",
+    },
+  },
+
   // ===== ID GENERATION (auto-incrementing per device) =====
-  nextId(kind) {
+  nextId(kind, prefix = "BWC") {
     const year = new Date().getFullYear();
     const key = `bwc_counter_${kind}_${year}`;
     const current = parseInt(localStorage.getItem(key) || "0", 10);
     const next = current + 1;
     localStorage.setItem(key, String(next));
-    return `BWC-${kind}-${year}-${String(next).padStart(4, "0")}`;
+    return `${prefix}-${kind}-${year}-${String(next).padStart(4, "0")}`;
   },
 
-  peekId(kind) {
+  peekId(kind, prefix = "BWC") {
     const year = new Date().getFullYear();
     const key = `bwc_counter_${kind}_${year}`;
     const current = parseInt(localStorage.getItem(key) || "0", 10);
-    return `BWC-${kind}-${year}-${String(current + 1).padStart(4, "0")}`;
+    return `${prefix}-${kind}-${year}-${String(current + 1).padStart(4, "0")}`;
   },
 
   // ===== AUTOSAVE =====
@@ -154,45 +171,82 @@ const BWC = {
   },
 };
 
+// ===== PDF: TRUE-CENTER TEXT (accounts for letter-spacing) =====
+// jsPDF's { align: "center" } ignores charSpace, so spaced text drifts right.
+// This measures the real rendered width (glyphs + inter-letter spacing) and
+// draws left-aligned from the correct start x so it's centered on cx.
+BWC.centerText = function (doc, text, cx, y, charSpace) {
+  const cs = charSpace || 0;
+  const glyphW = doc.getTextWidth(text);
+  const spacingW = cs * Math.max(0, String(text).length - 1);
+  const totalW = glyphW + spacingW;
+  doc.text(text, cx - totalW / 2, y, { charSpace: cs });
+};
+
 // ===== PDF: SHARED HEADER/FOOTER =====
 BWC.pdfHeader = function (doc, opts) {
-  // opts: { docType, docId }
+  // opts: { docType, docId, brand }  — brand defaults to "bwc"
   const w = doc.internal.pageSize.getWidth();
   const c = BWC.colors;
+  const brand = (opts && opts.brand) || "bwc";
+  const id = BWC.brands[brand] || BWC.brands.bwc;
 
-  // Wordmark — drawn manually to avoid font loading issues in jsPDF
-  doc.setTextColor(...c.deepNavy);
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(22);
-  // Letter-spaced wordmark approximation
-  doc.text("BLUE WAVE", w / 2, 60, { align: "center", charSpace: 4 });
+  if (brand === "sl") {
+    // ===== S&L PROPERTY MANAGEMENT wordmark (vector, matches sticker) =====
+    const cx = w / 2;
+    const blockW = 150; // width of the flanking divider rules
 
-  // Wave underline — drawn as a series of bezier curves (like the brand mark)
-  doc.setDrawColor(...c.waveBlue);
-  doc.setLineWidth(1.5);
-  doc.setLineCap("round");
-  const waveY = 76;
-  const waveStart = w / 2 - 60;
-  // Each bezier: [cp1x, cp1y, cp2x, cp2y, x, y] — relative to previous point
-  // Two arcs: up then down, repeated to look like a wave
-  doc.lines(
-    [
-      [10, -7, 20, -7, 30, 0], // up arch
-      [10, 7, 20, 7, 30, 0],   // down arch
-      [10, -7, 20, -7, 30, 0], // up arch
-      [10, 7, 20, 7, 30, 0],   // down arch
-    ],
-    waveStart,
-    waveY,
-    [1, 1],
-    "S",
-    false
-  );
+    // Top divider rule
+    doc.setDrawColor(...c.deepNavy);
+    doc.setLineWidth(0.8);
+    doc.line(cx - blockW / 2, 48, cx + blockW / 2, 48);
 
-  // Subtitle
-  doc.setTextColor(...c.deepNavy);
-  doc.setFontSize(7);
-  doc.text("CONSTRUCTION", w / 2, 92, { align: "center", charSpace: 6 });
+    // "S&L" wordmark — centered accounting for letter-spacing
+    doc.setTextColor(...c.deepNavy);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(26);
+    BWC.centerText(doc, "S&L", cx, 74, 3);
+
+    // "PROPERTY MANAGEMENT" subtitle — centered accounting for letter-spacing
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(7.5);
+    BWC.centerText(doc, "PROPERTY MANAGEMENT", cx, 89, 4);
+
+    // Bottom divider rule
+    doc.setLineWidth(0.8);
+    doc.line(cx - blockW / 2, 97, cx + blockW / 2, 97);
+  } else {
+    // ===== BLUE WAVE CONSTRUCTION wordmark (vector) =====
+    doc.setTextColor(...c.deepNavy);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(22);
+    doc.text("BLUE WAVE", w / 2, 60, { align: "center", charSpace: 4 });
+
+    // Wave underline — drawn as a series of bezier curves (like the brand mark)
+    doc.setDrawColor(...c.waveBlue);
+    doc.setLineWidth(1.5);
+    doc.setLineCap("round");
+    const waveY = 76;
+    const waveStart = w / 2 - 60;
+    doc.lines(
+      [
+        [10, -7, 20, -7, 30, 0], // up arch
+        [10, 7, 20, 7, 30, 0],   // down arch
+        [10, -7, 20, -7, 30, 0], // up arch
+        [10, 7, 20, 7, 30, 0],   // down arch
+      ],
+      waveStart,
+      waveY,
+      [1, 1],
+      "S",
+      false
+    );
+
+    // Subtitle
+    doc.setTextColor(...c.deepNavy);
+    doc.setFontSize(7);
+    doc.text("CONSTRUCTION", w / 2, 92, { align: "center", charSpace: 6 });
+  }
 
   // Top right: doc type + ID
   doc.setTextColor(...c.inkFaint);
@@ -206,13 +260,13 @@ BWC.pdfHeader = function (doc, opts) {
   doc.setFont("helvetica", "normal");
   doc.text(opts.docId, w - 50, 64, { align: "right" });
 
-  // Top left: license
+  // Top left: license (if any) + email
   doc.setTextColor(...c.inkFaint);
   doc.setFontSize(7);
-  doc.text(BWC.contact.license, 50, 50, { charSpace: 1 });
+  if (id.license) doc.text(id.license, 50, 50, { charSpace: 1 });
   doc.setTextColor(...c.inkSoft);
   doc.setFontSize(8);
-  doc.text(BWC.contact.email, 50, 64);
+  doc.text(id.email, 50, id.license ? 64 : 50);
 
   // Divider rule
   doc.setDrawColor(...c.rule);
@@ -222,10 +276,11 @@ BWC.pdfHeader = function (doc, opts) {
   return 130; // y cursor after header
 };
 
-BWC.pdfFooter = function (doc, pageNum, totalPages) {
+BWC.pdfFooter = function (doc, pageNum, totalPages, brand) {
   const w = doc.internal.pageSize.getWidth();
   const h = doc.internal.pageSize.getHeight();
   const c = BWC.colors;
+  const id = BWC.brands[brand || "bwc"] || BWC.brands.bwc;
 
   doc.setDrawColor(...c.rule);
   doc.setLineWidth(0.4);
@@ -233,7 +288,8 @@ BWC.pdfFooter = function (doc, pageNum, totalPages) {
 
   doc.setTextColor(...c.inkFaint);
   doc.setFontSize(7);
-  doc.text(BWC.contact.name + "  ·  " + BWC.contact.license, 50, h - 35, {
+  const footLeft = id.license ? id.name + "  \u00b7  " + id.license : id.name;
+  doc.text(footLeft, 50, h - 35, {
     charSpace: 0.8,
   });
   doc.text(`Page ${pageNum} of ${totalPages}`, w - 50, h - 35, {

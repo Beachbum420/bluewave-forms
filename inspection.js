@@ -69,7 +69,7 @@ const HAZARD_CATEGORIES = [
 // ============================================
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("inspectionDate").value = BWC.todayISO();
-  document.getElementById("reportIdDisplay").textContent = BWC.peekId("INS");
+  document.getElementById("reportIdDisplay").textContent = BWC.peekId("INS", "SL");
 
   loadCatalog();
 
@@ -1136,7 +1136,7 @@ function exportJson() {
 
   const exportData = {
     documentType: "inspection_report",
-    documentId: BWC.peekId("INS"),
+    documentId: BWC.peekId("INS", "SL"),
     generatedAt: new Date().toISOString(),
     property: {
       address: data.propertyAddress,
@@ -1195,7 +1195,7 @@ function exportToWalkthrough() {
     return;
   }
   const handoff = {
-    sourceInspectionId: BWC.peekId("INS"),
+    sourceInspectionId: BWC.peekId("INS", "SL"),
     propertyAddress: document.getElementById("propertyAddress").value,
     unitNumber: document.getElementById("unitNumber").value,
     items: needsEst.map((i) => ({
@@ -1252,7 +1252,7 @@ async function generatePdf() {
   }
   BWC.toast("Generating report...");
 
-  const reportId = BWC.nextId("INS");
+  const reportId = BWC.nextId("INS", "SL");
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit: "pt", format: "letter" });
   const c = BWC.colors;
@@ -1260,7 +1260,7 @@ async function generatePdf() {
   const margin = 50;
   const contentW = pageW - margin * 2;
 
-  const headerOpts = { docType: "Inspection Report", docId: reportId };
+  const headerOpts = { docType: "Inspection Report", docId: reportId, brand: "sl" };
   let y = BWC.pdfHeader(doc, headerOpts);
 
   // PREPARED FOR / PROPERTY
@@ -1697,13 +1697,13 @@ async function generatePdf() {
   const totalPages = doc.internal.getNumberOfPages();
   for (let i = 1; i <= totalPages; i++) {
     doc.setPage(i);
-    BWC.pdfFooter(doc, i, totalPages);
+    BWC.pdfFooter(doc, i, totalPages, "sl");
   }
 
   const fname = `${reportId}_${(data.propertyAddress || "report").replace(/[^\w]+/g, "_").slice(0, 40)}.pdf`;
   doc.save(fname);
   BWC.toast("PDF saved");
-  document.getElementById("reportIdDisplay").textContent = BWC.peekId("INS");
+  document.getElementById("reportIdDisplay").textContent = BWC.peekId("INS", "SL");
 }
 
 // ============================================
